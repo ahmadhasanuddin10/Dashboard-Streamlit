@@ -54,15 +54,23 @@ plt.xlabel('Seller State')
 plt.ylabel('Delivery Time (days)')
 plt.xticks(rotation=45)
 
+# Menyimpan gambar sebagai objek gambar dan sumbu
+fig, ax = plt.subplots()
+sns.boxplot(x='seller_state', y='delivery_time', data=merged_df, ax=ax)
+plt.title('Delivery Time by Seller State')
+plt.xlabel('Seller State')
+plt.ylabel('Delivery Time (days)')
+plt.xticks(rotation=45)
+
 # Menampilkan boxplot menggunakan st.pyplot()
-st.pyplot()
+st.pyplot(fig)
 
 # Scatterplot Waktu Pengiriman vs Biaya Pengiriman
-plt.figure(figsize=(12, 6))
-sns.scatterplot(x='freight_value', y='delivery_time', data=merged_df)
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.scatterplot(x='freight_value', y='delivery_time', data=merged_df, ax=ax)
 plt.title('Delivery Time vs Freight Value')
 plt.xlabel('Freight Value')
 plt.ylabel('Delivery Time (days)')
 
 # Menampilkan scatterplot menggunakan st.pyplot()
-st.pyplot()
+st.pyplot(fig)
