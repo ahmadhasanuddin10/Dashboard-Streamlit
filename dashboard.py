@@ -43,8 +43,7 @@ st.subheader('Total Penjualan per Kota Pelanggan')
 sales_by_city = merged_df.groupby('customer_city')['price'].sum().sort_values(ascending=False)
 st.bar_chart(sales_by_city)
 
-# Mengonversi kolom 'seller_state' menjadi kategorikal
-merged_df['seller_state'] = merged_df['seller_state'].astype('category')
+
 
 # Gabungkan data order_items dengan data orders untuk mendapatkan informasi waktu pengiriman
 merged_df = pd.merge(order_items_df, orders_df, on='order_id')
