@@ -33,13 +33,6 @@ with st.sidebar:
     st.write("Selamat datang di Dashboard E-Commerce")
 
 
-
-
-
-
-
-
-
 # Visualisasi dan analisis data
 st.subheader('Total Penjualan per Kategori Produk')
 # Menghitung total penjualan per kategori produk
@@ -51,3 +44,41 @@ sales_by_city = merged_df.groupby('customer_city')['price'].sum().sort_values(as
 st.bar_chart(sales_by_city)
 
 
+# Gabungkan data order_items dengan data orders untuk mendapatkan informasi waktu pengiriman
+merged_df = pd.merge(order_items_df, orders_df, on='order_id')
+
+# Gabungkan data yang telah digabungkan dengan data sellers untuk mendapatkan informasi penjual
+merged_df = pd.merge(merged_df, sellers_df, on='seller_id')
+
+# Menghitung durasi waktu pengiriman
+merged_df['order_purchase_timestamp'] = pd.to_datetime(merged_df['order_purchase_timestamp'])
+merged_df['order_delivered_customer_date'] = pd.to_datetime(merged_df['order_delivered_customer_date'])
+merged_df['delivery_time'] = merged_df['order_delivered_customer_date'] - merged_df['order_purchase_timestamp']
+
+# Boxplot Waktu Pengiriman per Kota Penjual
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='seller_state', y='delivery_time', data=merged_df)
+plt.title('Delivery Time by Seller State')
+plt.xlabel('Seller State')
+plt.ylabel('Delivery Time (days)')
+plt.xticks(rotation=45)
+
+
+# Menyimpan gambar sebagai objek gambar dan sumbu
+fig, ax = plt.subplots()
+sns.boxplot(x='seller_state', y='delivery_time', data=merged_df, ax=ax)
+plt.title('Delivery Time by Seller State')
+plt.xlabel('Seller State')
+plt.ylabel('Delivery Time (days)')
+plt.xticks(rotation=45)
+
+# Menampilkan plot menggunakan st.pyplot() dengan objek gambar
+st.pyplot(fig)
+
+# Scatterplot Waktu Pengiriman vs Biaya Pengiriman
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.scatterplot(x='freight_value', y='delivery_time', data=merged_df, ax=ax)
+plt.title('Delivery Time vs Freight Value')
+plt.xlabel('Freight Value')
+plt.ylabel('Delivery Time (days)')
+st.pyplot(fig)
