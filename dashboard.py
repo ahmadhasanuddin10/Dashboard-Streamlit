@@ -19,20 +19,31 @@ merged_df = pd.merge(merged_df, products_df, on='product_id')
 st.title('E-Commerce Dashboard')
 
 # Sidebar dengan logo dan teks selamat datang
-min_date = merged_df["order_purchase_timestamp"].min()
-max_date = merged_df["order_purchase_timestamp"].max()
+min_date = pd.to_datetime(merged_df["order_purchase_timestamp"]).min().date()
+max_date = pd.to_datetime(merged_df["order_purchase_timestamp"]).max().date()
 with st.sidebar:
     st.image("https://bangkit-academy-blogs.netlify.app/assets/logo.png")
     st.write("Selamat datang di Dashboard E-Commerce")
+    # Widget untuk memilih rentang tanggal
+    date_range = st.slider("Pilih Rentang Tanggal", min_value=min_date, max_value=max_date, value=(min_date, max_date))
+
+# Filter data berdasarkan rentang tanggal yang dipilih
+filtered_df = merged_df[(merged_df['order_purchase_timestamp'] >= str(date_range[0])) & (merged_df['order_purchase_timestamp'] <= str(date_range[1]))]
 
 # Visualisasi dan analisis data
 st.subheader('Total Penjualan per Kategori Produk')
 # Menghitung total penjualan per kategori produk
-sales_by_category = merged_df.groupby('product_category_name')['price'].sum().sort_values(ascending=False)
+sales_by_category = filtered_df.groupby('product_category_name')['price'].sum().sort_values(ascending=False)
 st.bar_chart(sales_by_category)
 
+# Widget untuk memilih kategori produk
+selected_category = st.selectbox("Pilih Kategori Produk", options=sales_by_category.index)
+
+# Filter data berdasarkan kategori produk yang dipilih
+filtered_df = filtered_df[filtered_df['product_category_name'] == selected_category]
+
 st.subheader('Total Penjualan per Kota Pelanggan')
-sales_by_city = merged_df.groupby('customer_city')['price'].sum().sort_values(ascending=False)
+sales_by_city = filtered_df.groupby('customer_city')['price'].sum().sort_values(ascending=False)
 st.bar_chart(sales_by_city)
 
 # Gabungkan data order_items dengan data orders untuk mendapatkan informasi waktu pengiriman
